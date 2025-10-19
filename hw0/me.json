@@ -1,0 +1,10 @@
+{
+    "name": {
+        "first" : "zhao",
+        "last" : "yang"
+    },
+    "fromWisconsin" :false,
+    "numCredits":23042,
+    "major":"Computer Science",
+    "interests":["Programming","coffee"]
+}
