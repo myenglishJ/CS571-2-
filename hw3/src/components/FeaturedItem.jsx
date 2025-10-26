@@ -12,8 +12,6 @@ export default function FeaturedItem(props) {
         <h5>{props.name}</h5>
         <h6>${props.price} per unit</h6>
         <p>{props.description}</p>
-
-        
         {
             !status&&(
                 <>
