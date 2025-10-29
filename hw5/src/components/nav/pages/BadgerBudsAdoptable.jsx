@@ -6,8 +6,8 @@ import { Row } from "react-bootstrap";
 export default function BadgerBudsAdoptable(props) {
     const allCats = useContext(BadgerBudsDataContext);
     const [adoptableCats, setAdoptableCats]=useState([]);
-    useEffect(()=>{
-        onSave();
+        useEffect(()=>{
+            onSave();
     },[allCats]);
 
     function onSave(){
