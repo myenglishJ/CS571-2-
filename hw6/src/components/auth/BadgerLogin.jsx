@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Form,Button } from 'react-bootstrap';
-
+import { useNavigate } from 'react-router-dom';
+import BadgerLoginStatusContext from "../contexts/BadgerLoginStatusContext";
 
 export default function BadgerLogin() {
 
@@ -8,6 +9,8 @@ export default function BadgerLogin() {
     const username = useRef();
     const pin = useRef();
     const regex = /^\d{7}$/;
+    const navigate = useNavigate();
+    const [loginStatus, setLoginStatus] = useContext(BadgerLoginStatusContext)
 
     function login(e){
         e.preventDefault()
@@ -36,8 +39,14 @@ export default function BadgerLogin() {
             }
             if(res.status==200){
                 alert("The login was successful");
+                sessionStorage.setItem("loginStatus","logged-in");
+                sessionStorage.setItem("username",username.current.value);
+                setLoginStatus("logged-in");
+                navigate('/'); 
             }
         })
+        
+        
     }
     return <>
         <h1>Login</h1>
