@@ -2,13 +2,33 @@ import { Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import BadgerPreferencesScreen from "../screens/BadgerPreferencesScreen.jsx";
 import BadgerNewsStack from "./BadgerNewsStack.jsx"
+import Ionicons from "react-native-vector-icons/Ionicons";
 const BadgerSocialTab = createBottomTabNavigator();
 
 function BadgerTabs(props) {
     return (
         <BadgerSocialTab.Navigator >
-            <BadgerSocialTab.Screen name="News" component={BadgerNewsStack} options={{headerShown: false}}/>
-            <BadgerSocialTab.Screen name="Preferences" component={BadgerPreferencesScreen}/>
+            <BadgerSocialTab.Screen 
+                name="News" 
+                component={BadgerNewsStack} 
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({color, size, focused}) => (
+                    <Ionicons name="newspaper"
+                        color={focused ? "#c5050c" : color}
+                        size={size}/>
+                )
+                }}/>
+            <BadgerSocialTab.Screen 
+                name="Preferences" 
+                component={BadgerPreferencesScreen}
+                options={{
+                    tabBarIcon: ({color, size, focused}) => (
+                    <Ionicons name="settings-outline"
+                            color={focused ? "#c5050c" : color}
+                            size={size}/>
+                    )
+                }}/>
         </BadgerSocialTab.Navigator>
     )
 }
