@@ -12,7 +12,7 @@ function BadgerLoginScreen(props) {
             style={styles.input}
             autoCapitalize = "none"
             value={name}
-            onChange={setName}
+            onChangeText={setName}
         />
         <Text>PIN</Text>
         <TextInput 
@@ -21,7 +21,7 @@ function BadgerLoginScreen(props) {
             maxLength= {7}
             secureTextEntry={true}
             value={pin}
-            onChange={setPin}
+            onChangeText={setPin}
             keyboardType="numeric"
         />
         <Button color="crimson" title="Login" onPress={() => {
@@ -41,12 +41,12 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     input: {
-    width: 200,
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
+        width: 200,
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+    },
 });
 
 export default BadgerLoginScreen;

@@ -8,6 +8,7 @@ import BadgerChatroomScreen from './screens/BadgerChatroomScreen';
 import BadgerRegisterScreen from './screens/BadgerRegisterScreen';
 import BadgerLoginScreen from './screens/BadgerLoginScreen';
 import BadgerLandingScreen from './screens/BadgerLandingScreen';
+import { Alert } from 'react-native';
 
 
 const ChatDrawer = createDrawerNavigator();
@@ -32,7 +33,7 @@ export default function App() {
         'X-ID-CS571':CS571.getBadgerId(),
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, pin })
     })
     .then(res=>{
       if(res.status !== 200){
@@ -45,17 +46,42 @@ export default function App() {
       SecureStore.setItemAsync('jwt', data.token).catch(error => {
         console.error('Error storing the JWT:', error);
       });
-      setIsLoggedIn(true); // I should really do a fetch to login first!
+      setIsLoggedIn(true);
     })
     .catch(error => {
-      // Display an alert with the error message
       Alert.alert('Login Error', error.message);
     });
   }
 
   function handleSignup(username, pin) {
-    // hmm... maybe this is helpful!
-    setIsLoggedIn(true); // I should really do a fetch to register first!
+    fetch(`https://cs571.org/rest/s25/hw9/register`,{
+      method : 'POST',
+      credentials: 'include',
+      headers : {
+        'X-ID-CS571':CS571.getBadgerId(),
+        'Content-Type': 'application/json'
+      },
+      body : JSON.stringify({
+        "username": username,
+        "pin": pin
+      })
+    })
+    .then(res => {
+      if(res.status == 409){
+        Alert.alert("The username is already token");
+      }
+      if(res.status == 200){
+        Alert.alert("Successfully register");
+      }
+      else {
+        Alert.alert(`false${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      SecureStore.setItemAsync('jwt', data.token);
+      setIsLoggedIn(true);
+    })
   }
 
   if (isLoggedIn) {
