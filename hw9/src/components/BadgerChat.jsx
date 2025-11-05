@@ -25,7 +25,32 @@ export default function App() {
 
   function handleLogin(username, pin) {
     // hmm... maybe this is helpful!
-    setIsLoggedIn(true); // I should really do a fetch to login first!
+    fetch(`https://cs571.org/rest/s25/hw9/login`,{
+      method : "POST",
+      credentials: 'include',
+      headers : {
+        'X-ID-CS571':CS571.getBadgerId(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    })
+    .then(res=>{
+      if(res.status !== 200){
+        return response.json().then(data => {
+          throw new Error(data.message || 'Incorrect login, please try again.');
+        });
+      }
+    })
+    .then(data=>{
+      SecureStore.setItemAsync('jwt', data.token).catch(error => {
+        console.error('Error storing the JWT:', error);
+      });
+      setIsLoggedIn(true); // I should really do a fetch to login first!
+    })
+    .catch(error => {
+      // Display an alert with the error message
+      Alert.alert('Login Error', error.message);
+    });
   }
 
   function handleSignup(username, pin) {
