@@ -63,7 +63,6 @@ function BadgerChatroomScreen(props) {
                 if (!res.ok) {
                     throw new Error('Failed to create post');
                 }
-
                 return res.json();
             })
             .then(() => {
