@@ -25,11 +25,11 @@ function BadgerLoginScreen(props) {
             keyboardType="numeric"
         />
         <Button color="crimson" title="Login" onPress={() => {
-            Alert.alert("Hmmm...", "I should check the user's credentials!");
             props.handleLogin(name, pin)
         }} />
         <Text>New here?</Text>
         <Button color="grey" title="Signup" onPress={() => props.setIsRegistering(true)} />
+        <Button color="grey" title="Continue As Guest" onPress={() => props.setIsGuest(true)} />
     </View>;
 }
 

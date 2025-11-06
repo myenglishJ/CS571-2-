@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Button, Text } from "react-native";
 import BadgerCard from "./BadgerCard"
 
 function BadgerChatMessage(props) {
@@ -10,6 +10,19 @@ function BadgerChatMessage(props) {
         <Text style={{fontSize: 12}}>by {props.poster} | Posted on {dt.toLocaleDateString()} at {dt.toLocaleTimeString()}</Text>
         <Text></Text>
         <Text>{props.content}</Text>
+        {
+            (props.username == props.poster) &&  
+            <Button 
+                title="DELETE POST" 
+                onPress={() => props.onDelect(props.id)}
+                style={ {
+                    alignItems: "center",
+                    backgroundColor: "#f11717ff",
+                    borderRadius: 5,
+                    width: '100%',
+                    marginLeft: 0,
+                }}/>
+        }
     </BadgerCard>
 }
 

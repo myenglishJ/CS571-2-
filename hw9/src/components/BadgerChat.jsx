@@ -8,45 +8,63 @@ import BadgerChatroomScreen from './screens/BadgerChatroomScreen';
 import BadgerRegisterScreen from './screens/BadgerRegisterScreen';
 import BadgerLoginScreen from './screens/BadgerLoginScreen';
 import BadgerLandingScreen from './screens/BadgerLandingScreen';
+import BadgerLogoutScreen from './screens/BadgerLogoutScreen';
+import BadgerConversionScreen from './screens/BadgerConversionScreen';
 import { Alert } from 'react-native';
 
 
 const ChatDrawer = createDrawerNavigator();
 
 export default function App() {
-
+  const [isGuest,setIsGuest] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isRegistering, setIsRegistering] = useState(false);
   const [chatrooms, setChatrooms] = useState([]);
-
+  const [user,setUser] = useState("");
   useEffect(() => {
-    // hmm... maybe I should load the chatroom names here
-    setChatrooms(["Hello", "World"]) // for example purposes only!
+    fetch("https://cs571.org/rest/s25/hw9/chatrooms", {
+      method: "GET",
+      headers: {
+        "X-CS571-ID": CS571.getBadgerId()
+      },
+    })
+    .then(res => res.json())
+    .then(json => {
+      setChatrooms(json)
+    })
   }, []);
 
+  const onLogout = () => {
+    setIsLoggedIn(false);
+  }
+
   function handleLogin(username, pin) {
-    // hmm... maybe this is helpful!
     fetch(`https://cs571.org/rest/s25/hw9/login`,{
       method : "POST",
       credentials: 'include',
       headers : {
-        'X-ID-CS571':CS571.getBadgerId(),
+        'X-CS571-ID':CS571.getBadgerId(),
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username, pin })
+      body: JSON.stringify({
+          username: username,
+          pin: pin
+      })
     })
     .then(res=>{
-      if(res.status !== 200){
-        return response.json().then(data => {
-          throw new Error(data.message || 'Incorrect login, please try again.');
+      if(res.status != 200){
+        return res.json().then(data => {
+          throw new Error(res.status || 'Incorrect login, please try again.');
         });
       }
+      return res.json()
     })
     .then(data=>{
       SecureStore.setItemAsync('jwt', data.token).catch(error => {
         console.error('Error storing the JWT:', error);
       });
       setIsLoggedIn(true);
+      setUser(username);
     })
     .catch(error => {
       Alert.alert('Login Error', error.message);
@@ -58,7 +76,7 @@ export default function App() {
       method : 'POST',
       credentials: 'include',
       headers : {
-        'X-ID-CS571':CS571.getBadgerId(),
+        'X-CS571-ID':CS571.getBadgerId(),
         'Content-Type': 'application/json'
       },
       body : JSON.stringify({
@@ -81,10 +99,11 @@ export default function App() {
     .then(data => {
       SecureStore.setItemAsync('jwt', data.token);
       setIsLoggedIn(true);
+      setUser(username);
     })
   }
 
-  if (isLoggedIn) {
+  if (isGuest||isLoggedIn) {
     return (
       <NavigationContainer>
         <ChatDrawer.Navigator>
@@ -92,16 +111,26 @@ export default function App() {
           {
             chatrooms.map(chatroom => {
               return <ChatDrawer.Screen key={chatroom} name={chatroom}>
-                {(props) => <BadgerChatroomScreen name={chatroom} />}
+                {(props) => <BadgerChatroomScreen name={chatroom} username={user} isGuest={isGuest}/>}
               </ChatDrawer.Screen>
             })
           }
+          {
+            isGuest ?
+            <ChatDrawer.Screen name="SIGNUP!">
+              {(props) =><BadgerConversionScreen setIsRegistering={setIsRegistering} setIsGuest={setIsGuest}/>} 
+            </ChatDrawer.Screen> 
+            :<ChatDrawer.Screen name="Logout">
+              {(props) =><BadgerLogoutScreen onLogout={onLogout}/>} 
+            </ChatDrawer.Screen> 
+          }
+          
         </ChatDrawer.Navigator>
       </NavigationContainer>
     );
   } else if (isRegistering) {
     return <BadgerRegisterScreen handleSignup={handleSignup} setIsRegistering={setIsRegistering} />
   } else {
-    return <BadgerLoginScreen handleLogin={handleLogin} setIsRegistering={setIsRegistering} />
+    return <BadgerLoginScreen handleLogin={handleLogin} setIsRegistering={setIsRegistering} setIsGuest={setIsGuest}/>
   }
 }
